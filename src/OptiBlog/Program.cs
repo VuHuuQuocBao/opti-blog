@@ -4,6 +4,7 @@ using EPiServer.DependencyInjection;
 using EPiServer.Web.Routing;
 using Optimizely.Cms.DependencyInjection;
 using Optimizely.Graph.DependencyInjection;
+using OptiBlog.Business.Validation;
 
 Host.CreateDefaultBuilder(args)
     .ConfigureCmsDefaults()
@@ -22,6 +23,8 @@ Host.CreateDefaultBuilder(args)
                 .AddCms()
                 .AddAdminUserRegistration()
                 .AddEmbeddedLocalization<Program>();
+
+            services.AddCmsValidator<BlogPostPageParentValidator>();
 
             if (!string.IsNullOrWhiteSpace(context.Configuration["Optimizely:ContentGraph:AppKey"]))
             {

@@ -1,0 +1,3 @@
+@model StartPage
+<h1 @Html.EditAttributes(m => m.Heading)>@(string.IsNullOrWhiteSpace(Model.Heading) ? Model.Name : Model.Heading)</h1>
+@Html.PropertyFor(m => m.MainContentArea)

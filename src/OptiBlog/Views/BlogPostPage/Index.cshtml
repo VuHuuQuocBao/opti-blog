@@ -1,0 +1,47 @@
+@using EPiServer.Web
+@model BlogPostPage
+@inject IContextModeResolver ContextModeResolver
+@{
+    var isEditing = ContextModeResolver.CurrentMode.EditOrPreview();
+}
+<article class="blog-post">
+    <h1 @Html.EditAttributes(m => m.Title)>@Model.GetTitle()</h1>
+
+    <p class="post-meta">
+        <time @Html.EditAttributes(m => m.PublishDate) datetime="@Model.GetPublishDate().ToString("yyyy-MM-dd")">@Model.GetPublishDate().ToString("d MMM yyyy")</time>
+        @if (!string.IsNullOrWhiteSpace(Model.Author) || isEditing)
+        {
+            <span>· by <span @Html.EditAttributes(m => m.Author)>@Model.Author</span></span>
+        }
+    </p>
+
+    @if (!ContentReference.IsNullOrEmpty(Model.HeroImage))
+    {
+        <img class="blog-post__hero" src="@Url.ContentUrl(Model.HeroImage)" alt="" @Html.EditAttributes(m => m.HeroImage)>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.Summary) || isEditing)
+    {
+        <p class="blog-post__summary" @Html.EditAttributes(m => m.Summary)>@Model.Summary</p>
+    }
+
+    @Html.PropertyFor(m => m.MainBody)
+
+    @if (Model.Tags?.Count > 0)
+    {
+        <p class="blog-post__tags">
+            @foreach (var tag in Model.Tags)
+            {
+                <span class="tag">@tag</span>
+            }
+        </p>
+    }
+
+    @if (Model.RelatedPosts?.IsEmpty == false || isEditing)
+    {
+        <section class="blog-post__related">
+            <h2>Related posts</h2>
+            @Html.PropertyFor(m => m.RelatedPosts)
+        </section>
+    }
+</article>

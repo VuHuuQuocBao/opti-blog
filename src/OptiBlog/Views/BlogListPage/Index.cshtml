@@ -1,0 +1,37 @@
+@model BlogListPageViewModel
+@{
+    var currentPage = Model.CurrentPage;
+}
+<h1 @Html.EditAttributes(m => m.CurrentPage.Heading)>@(string.IsNullOrWhiteSpace(currentPage.Heading) ? currentPage.Name : currentPage.Heading)</h1>
+@Html.PropertyFor(m => m.CurrentPage.Intro)
+
+@if (Model.Posts.Count > 0)
+{
+    <ul class="post-list" role="list">
+        @foreach (var post in Model.Posts)
+        {
+            <li><partial name="_BlogTeaser" model="new BlogTeaserViewModel(post)" /></li>
+        }
+    </ul>
+
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="pagination" aria-label="Pagination">
+            @if (Model.HasPreviousPage)
+            {
+                <a href="?page=@(Model.PageNumber - 1)" rel="prev">Previous</a>
+            }
+            <span>Page @Model.PageNumber of @Model.TotalPages</span>
+            @if (Model.HasNextPage)
+            {
+                <a href="?page=@(Model.PageNumber + 1)" rel="next">Next</a>
+            }
+        </nav>
+    }
+}
+else
+{
+    <p>No posts yet.</p>
+}
+
+@Html.PropertyFor(m => m.CurrentPage.MainContentArea)

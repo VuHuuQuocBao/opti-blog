@@ -1,0 +1,14 @@
+@model SiteHeaderViewModel
+<header class="site-header">
+    <div class="container site-header__inner">
+        <a class="site-header__logo" href="@Model.HomePageUrl">Opti Blog</a>
+        <nav class="site-header__nav" aria-label="Primary">
+            <ul role="list">
+                @foreach (var menuItem in Model.Menu)
+                {
+                    <li><a href="@menuItem.Link">@menuItem.Text</a></li>
+                }
+            </ul>
+        </nav>
+    </div>
+</header>

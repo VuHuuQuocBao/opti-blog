@@ -1,0 +1,33 @@
+@using EPiServer.Web.Routing
+@inject IContentRouteHelper ContentRouteHelper
+@{
+    var currentPage = ContentRouteHelper.Content as SitePageData;
+    var title = string.IsNullOrWhiteSpace(currentPage?.MetaTitle) ? currentPage?.Name : currentPage.MetaTitle;
+}
+<!doctype html>
+<html lang="@(currentPage?.Language?.Name ?? "en")">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@(string.IsNullOrWhiteSpace(title) ? "Opti Blog" : $"{title} – Opti Blog")</title>
+    @if (!string.IsNullOrWhiteSpace(currentPage?.MetaDescription))
+    {
+        <meta name="description" content="@currentPage.MetaDescription">
+    }
+    <script type="module" crossorigin src="/blog-landing-page.js"></script>
+    <link rel="stylesheet" crossorigin href="/blog-landing-page.css">
+    @Html.RequiredClientResources("Header")
+</head>
+<body>
+    @await Component.InvokeAsync("SiteHeader")
+    <main class="container">
+        @RenderBody()
+    </main>
+    <footer class="site-footer">
+        <div class="container site-footer__inner">
+            <p>&copy; @DateTime.Now.Year Opti Blog</p>
+        </div>
+    </footer>
+    @Html.RequiredClientResources("Footer")
+</body>
+</html>
