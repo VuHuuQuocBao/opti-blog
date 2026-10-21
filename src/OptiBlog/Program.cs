@@ -6,7 +6,11 @@ using Optimizely.Cms.DependencyInjection;
 using Optimizely.Graph.DependencyInjection;
 using OptiBlog.Business.Validation;
 
+// Git-ignored file holding machine-specific secrets such as the Optimizely Graph keys.
+const string LocalSettingsFile = "appsettings.Local.json";
+
 Host.CreateDefaultBuilder(args)
+    .ConfigureAppConfiguration(config => config.AddJsonFile(LocalSettingsFile, optional: true, reloadOnChange: true))
     .ConfigureCmsDefaults()
     .ConfigureWebHostDefaults(webBuilder => webBuilder
         .ConfigureServices((context, services) =>

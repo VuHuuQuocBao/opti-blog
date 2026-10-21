@@ -24,3 +24,6 @@ desktop.ini
 
 # Jetbrains IDE
 .idea/
+
+# Local-only settings (secrets)
+appsettings.Local.json
