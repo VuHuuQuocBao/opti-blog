@@ -11,6 +11,6 @@ public class BlogTeaserBlockCardViewComponent(IContentLoader contentLoader) : Bl
 {
     protected override IViewComponentResult InvokeComponent(BlogTeaserBlock currentContent) =>
         BlogTeaserBlockViewComponent.CreateViewModel(contentLoader, currentContent) is { } model
-            ? View(model)
+            ? View("Card", model)
             : Content(string.Empty);
 }
