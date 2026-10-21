@@ -5,6 +5,7 @@ using EPiServer.Web.Routing;
 using Optimizely.Cms.DependencyInjection;
 using Optimizely.Graph.DependencyInjection;
 using OptiBlog.Business.Editor;
+using OptiBlog.Business.Rendering;
 using OptiBlog.Business.Validation;
 
 // Git-ignored file holding machine-specific secrets such as the Optimizely Graph keys.
@@ -32,6 +33,7 @@ Host.CreateDefaultBuilder(args)
             services.AddCmsValidator<BlogPostPageParentValidator>();
             // Task 2
             services.AddCustomTinyMceStyles();
+            services.AddBlogDisplayOptions();
 
             if (!string.IsNullOrWhiteSpace(context.Configuration["Optimizely:ContentGraph:AppKey"]))
             {

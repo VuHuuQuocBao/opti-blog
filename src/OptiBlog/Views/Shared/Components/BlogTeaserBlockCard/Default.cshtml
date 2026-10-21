@@ -1,0 +1,20 @@
+@model BlogTeaserViewModel
+@{
+    var post = Model.Post;
+}
+<article class="teaser teaser--card">
+    <div class="teaser__card-body">
+        @if (!string.IsNullOrWhiteSpace(Model.Kicker))
+        {
+            <span class="teaser__badge">@Model.Kicker</span>
+        }
+        <h3 class="teaser__title"><a href="@Url.ContentUrl(post.ContentLink)">@post.GetTitle()</a></h3>
+        <p class="teaser__meta">
+            <time datetime="@post.GetPublishDate().ToString("yyyy-MM-dd")">@post.GetPublishDate().ToString("d MMM yyyy")</time>
+        </p>
+        @if (!string.IsNullOrWhiteSpace(post.Author))
+        {
+            <span class="teaser__author">@post.Author</span>
+        }
+    </div>
+</article>

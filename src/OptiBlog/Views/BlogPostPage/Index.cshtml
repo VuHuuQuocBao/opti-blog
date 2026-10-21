@@ -4,6 +4,9 @@
 @{
     var isEditing = ContextModeResolver.CurrentMode.EditOrPreview();
 }
+@section Styles {
+    <link rel="stylesheet" crossorigin href="/blog-post-page.css">
+}
 <article class="blog-post">
     <h1 @Html.EditAttributes(m => m.Title)>@Model.GetTitle()</h1>
 
@@ -39,9 +42,9 @@
 
     @if (Model.RelatedPosts?.IsEmpty == false || isEditing)
     {
-        <section class="blog-post__related">
+        <section class="blog-post__related" aria-label="Related posts">
             <h2>Related posts</h2>
-            @Html.PropertyFor(m => m.RelatedPosts)
+            @Html.PropertyFor(m => m.RelatedPosts, new { CssClass = "content-area", ChildrenCustomTagName = "div", ChildrenCssClass = "content-item" })
         </section>
     }
 </article>

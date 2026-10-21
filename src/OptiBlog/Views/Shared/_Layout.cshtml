@@ -15,7 +15,14 @@
         <meta name="description" content="@currentPage.MetaDescription">
     }
     <script type="module" crossorigin src="/blog-landing-page.js"></script>
-    <link rel="stylesheet" crossorigin href="/blog-landing-page.css">
+    @if (IsSectionDefined("Styles"))
+    {
+        @await RenderSectionAsync("Styles")
+    }
+    else
+    {
+        <link rel="stylesheet" crossorigin href="/blog-landing-page.css">
+    }
     @Html.RequiredClientResources("Header")
 </head>
 <body>
