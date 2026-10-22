@@ -1,14 +1,11 @@
+using OptiBlog.Business;
 using OptiBlog.Models.Pages;
 
 namespace OptiBlog.Models.ViewModels;
 
-public record BlogListPageViewModel(
-    BlogListPage CurrentPage,
-    IReadOnlyList<BlogPostPage> Posts,
-    int PageNumber,
-    int TotalPages)
+public record BlogListPageViewModel(BlogListPage CurrentPage, BlogSearchQuery Search, BlogSearchResult Result)
 {
-    public bool HasPreviousPage => PageNumber > 1;
-
-    public bool HasNextPage => PageNumber < TotalPages;
+    public int TotalPages => (int)Math.Ceiling(Result.Total / (double)CurrentPage.PageSize);
+    public bool HasPreviousPage => Search.Page > 1;
+    public bool HasNextPage => Search.Page < TotalPages;
 }

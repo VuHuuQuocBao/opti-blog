@@ -1,0 +1,46 @@
+@model SearchPageViewModel
+@{
+    var search = Model.Search;
+    var result = Model.Result;
+}
+<h1>@Model.CurrentPage.Name</h1>
+
+<form class="site-search" method="get" onchange="this.requestSubmit()">
+    <input type="search" name="q" value="@search.Q" placeholder="Search the site" aria-label="Search the site" />
+    <select name="type" aria-label="Type">
+        <option value="">All</option>
+        <option value="pages" selected="@(search.Type == "pages")">Pages</option>
+        <option value="posts" selected="@(search.Type == "posts")">Blog posts</option>
+        <option value="documents" selected="@(search.Type == "documents")">Documents</option>
+    </select>
+    <button type="submit">Search</button>
+
+    <p>@result.Total results</p>
+    <ul class="search-results" role="list">
+        @foreach (var hit in result.Hits)
+        {
+            <li>
+                <h2><a href="@hit.Url">@hit.Title</a></h2>
+                @if (hit.Excerpt is not null)
+                {
+                    <p>@Html.Raw(hit.Excerpt)</p>
+                }
+            </li>
+        }
+    </ul>
+
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="pagination" aria-label="Pagination">
+            @if (Model.HasPreviousPage)
+            {
+                <button type="submit" name="page" value="@(search.Page - 1)">Previous</button>
+            }
+            <span>Page @search.Page of @Model.TotalPages</span>
+            @if (Model.HasNextPage)
+            {
+                <button type="submit" name="page" value="@(search.Page + 1)">Next</button>
+            }
+        </nav>
+    }
+</form>

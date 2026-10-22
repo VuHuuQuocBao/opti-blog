@@ -1,28 +1,18 @@
-using EPiServer.Filters;
 using EPiServer.Web.Mvc;
 using Microsoft.AspNetCore.Mvc;
+using Optimizely.Graph.Cms.Query;
 using OptiBlog.Business;
 using OptiBlog.Models.Pages;
 using OptiBlog.Models.ViewModels;
 
 namespace OptiBlog.Controllers;
 
-public class BlogListPageController(IContentLoader contentLoader) : PageController<BlogListPage>
+public class BlogListPageController(IGraphContentClient graphClient) : PageController<BlogListPage>
 {
-    public IActionResult Index(BlogListPage currentPage, int page = 1)
+    public async Task<IActionResult> Index(BlogListPage currentPage, [FromQuery] BlogSearchQuery search, CancellationToken cancellationToken)
     {
-        var pageSize = currentPage.PageSize > 0 ? currentPage.PageSize : BlogListPage.DefaultPageSize;
+        var result = await graphClient.SearchBlogPostsAsync(currentPage, search, cancellationToken);
 
-        var posts = FilterForVisitor
-            .Filter(contentLoader.GetChildren<BlogPostPage>(currentPage.ContentLink))
-            .OfType<BlogPostPage>()
-            .OrderByDescending(post => post.GetPublishDate())
-            .ToList();
-
-        var totalPages = Math.Max(1, (int)Math.Ceiling(posts.Count / (double)pageSize));
-        var pageNumber = Math.Clamp(page, 1, totalPages);
-        var pagePosts = posts.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-
-        return View(new BlogListPageViewModel(currentPage, pagePosts, pageNumber, totalPages));
+        return View(new BlogListPageViewModel(currentPage, search, result));
     }
 }

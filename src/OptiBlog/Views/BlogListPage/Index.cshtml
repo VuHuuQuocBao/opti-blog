@@ -1,14 +1,38 @@
 @model BlogListPageViewModel
 @{
     var currentPage = Model.CurrentPage;
+    var search = Model.Search;
+    var result = Model.Result;
 }
 <h1 @Html.EditAttributes(m => m.CurrentPage.Heading)>@(string.IsNullOrWhiteSpace(currentPage.Heading) ? currentPage.Name : currentPage.Heading)</h1>
 @Html.PropertyFor(m => m.CurrentPage.Intro)
 
-@if (Model.Posts.Count > 0)
-{
+<form class="blog-search" method="get" onchange="this.requestSubmit()">
+    <input type="search" name="q" value="@search.Q" placeholder="Search posts" aria-label="Search posts" />
+    <select name="tag" aria-label="Tag">
+        <option value="">All tags</option>
+        @foreach (var tag in result.Tags)
+        {
+            <option value="@tag.Name" selected="@(tag.Name == search.Tag)">@tag.Name (@tag.Count)</option>
+        }
+    </select>
+    <select name="month" aria-label="Published">
+        <option value="">Any date</option>
+        @foreach (var month in result.Months)
+        {
+            <option value="@month.Name" selected="@(month.Name == search.Month)">@month.Name (@month.Count)</option>
+        }
+    </select>
+    <select name="newest" aria-label="Sort">
+        <option value="false">Relevance</option>
+        <option value="true" selected="@search.Newest">Newest</option>
+    </select>
+    <label><input type="checkbox" name="quick" value="true" checked="@search.Quick" /> Quick reads (@BlogSearch.QuickReadMinutes min or less)</label>
+    <button type="submit">Search</button>
+
+    <p>@result.Total posts</p>
     <ul class="post-list" role="list">
-        @foreach (var post in Model.Posts)
+        @foreach (var post in result.Posts)
         {
             <li><partial name="_BlogTeaser" model="new BlogTeaserViewModel(post)" /></li>
         }
@@ -19,19 +43,15 @@
         <nav class="pagination" aria-label="Pagination">
             @if (Model.HasPreviousPage)
             {
-                <a href="?page=@(Model.PageNumber - 1)" rel="prev">Previous</a>
+                <button type="submit" name="page" value="@(search.Page - 1)">Previous</button>
             }
-            <span>Page @Model.PageNumber of @Model.TotalPages</span>
+            <span>Page @search.Page of @Model.TotalPages</span>
             @if (Model.HasNextPage)
             {
-                <a href="?page=@(Model.PageNumber + 1)" rel="next">Next</a>
+                <button type="submit" name="page" value="@(search.Page + 1)">Next</button>
             }
         </nav>
     }
-}
-else
-{
-    <p>No posts yet.</p>
-}
+</form>
 
 @Html.PropertyFor(m => m.CurrentPage.MainContentArea)

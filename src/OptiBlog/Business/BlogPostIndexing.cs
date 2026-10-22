@@ -31,6 +31,10 @@ public static class BlogPostIndexing
     public static int AgeInDays(this BlogPostPage post) =>
         (DateTime.Today - post.GetPublishDate().Date).Days;
 
+    public static int BlogListId(this BlogPostPage post) => post.ParentLink.ID;
+
+    public static string PublishMonth(this BlogPostPage post) => post.GetPublishDate().ToString("yyyy-MM");
+
     public static IServiceCollection AddBlogGraphIndexing(this IServiceCollection services)
     {
         services.ConfigureGraphConventions(conventions =>
@@ -43,6 +47,8 @@ public static class BlogPostIndexing
             posts.IncludeField(post => post.ReadingTime(), IndexingType.Queryable);
             posts.IncludeField(post => post.PlainTextBody(), IndexingType.Searchable);
             posts.IncludeField(post => post.AgeInDays(), IndexingType.Queryable);
+            posts.IncludeField(post => post.BlogListId(), IndexingType.Queryable);
+            posts.IncludeField(post => post.PublishMonth(), IndexingType.Queryable);
         });
 
         return services;

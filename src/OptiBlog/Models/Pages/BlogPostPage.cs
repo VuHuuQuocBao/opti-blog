@@ -21,6 +21,7 @@ public class BlogPostPage : SitePageData
         Description = "Post title shown as the main heading.",
         GroupName = SystemTabNames.Content,
         Order = 10)]
+    [IndexingType(IndexingType.Searchable)]
     public virtual string? Title { get; set; }
 
     [CultureSpecific]
@@ -31,6 +32,7 @@ public class BlogPostPage : SitePageData
         Description = "Plain text summary used in listings and teasers. Maximum 300 characters.",
         GroupName = SystemTabNames.Content,
         Order = 20)]
+    [IndexingType(IndexingType.Searchable)]
     public virtual string? Summary { get; set; }
 
     [CultureSpecific]
@@ -45,6 +47,7 @@ public class BlogPostPage : SitePageData
         Description = "Date shown on the post and used to order the blog list.",
         GroupName = GroupNames.PostDetails,
         Order = 10)]
+    [IndexingType(IndexingType.Queryable)]
     public virtual DateTime? PublishDate { get; set; }
 
     [Display(
@@ -59,6 +62,7 @@ public class BlogPostPage : SitePageData
         Description = "Keywords for the post.",
         GroupName = GroupNames.PostDetails,
         Order = 30)]
+    [IndexingType(IndexingType.Queryable)]
     public virtual IList<string>? Tags { get; set; }
 
     [UIHint(UIHint.Image)]
