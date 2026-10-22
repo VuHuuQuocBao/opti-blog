@@ -7,6 +7,7 @@ using Optimizely.Graph.DependencyInjection;
 using OptiBlog.Business.Editor;
 using OptiBlog.Business.Rendering;
 using OptiBlog.Business.Validation;
+using OptiBlog.Business;
 
 // Git-ignored file holding machine-specific secrets such as the Optimizely Graph keys.
 const string LocalSettingsFile = "appsettings.Local.json";
@@ -39,6 +40,7 @@ Host.CreateDefaultBuilder(args)
             {
                 services.AddContentGraph();
                 services.AddGraphContentClient();
+                services.AddBlogGraphIndexing();
             }
         })
         .Configure((context, app) =>
