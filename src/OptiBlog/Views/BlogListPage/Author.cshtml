@@ -1,0 +1,43 @@
+@model AuthorPageViewModel
+@inject AuthorProfiles Authors
+@{
+    var author = Model.Author;
+    var initials = string.Concat(author.Name!.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(word => word[0]));
+}
+@section Styles {
+    <link rel="stylesheet" crossorigin href="/author.css">
+}
+<header class="author-profile__header">
+    <div class="author-profile__avatar teaser__media--placeholder" aria-hidden="true">@initials</div>
+    <div>
+        <h1>@author.Name</h1>
+        @if (!string.IsNullOrWhiteSpace(author.Bio))
+        {
+            <p class="author-profile__bio">@author.Bio</p>
+        }
+    </div>
+</header>
+
+<h2 class="author-profile__posts-heading">Posts by this author (@Model.Result.Total)</h2>
+
+<ul class="content-area" role="list">
+    @foreach (var post in Model.Result.Posts)
+    {
+        <li class="content-item content-item--full"><partial name="_Teaser" model="new BlogTeaserViewModel(post)" /></li>
+    }
+</ul>
+
+@if (Model.TotalPages > 1)
+{
+    <nav class="pagination" aria-label="Pagination">
+        @if (Model.HasPreviousPage)
+        {
+            <a href="@Authors.GetUrl(Model.BlogList.ContentLink, author.Slug!, Model.Page - 1)" rel="prev">Previous</a>
+        }
+        <span>Page @Model.Page of @Model.TotalPages</span>
+        @if (Model.HasNextPage)
+        {
+            <a href="@Authors.GetUrl(Model.BlogList.ContentLink, author.Slug!, Model.Page + 1)" rel="next">Next</a>
+        }
+    </nav>
+}

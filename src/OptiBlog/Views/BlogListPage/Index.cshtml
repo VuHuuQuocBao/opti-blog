@@ -31,10 +31,10 @@
     <button type="submit">Search</button>
 
     <p>@result.Total posts</p>
-    <ul class="post-list" role="list">
+    <ul class="content-area" role="list">
         @foreach (var post in result.Posts)
         {
-            <li><partial name="_BlogTeaser" model="new BlogTeaserViewModel(post)" /></li>
+            <li class="content-item content-item--full"><partial name="_Teaser" model="new BlogTeaserViewModel(post)" /></li>
         }
     </ul>
 

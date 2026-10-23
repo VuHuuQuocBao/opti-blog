@@ -35,6 +35,7 @@ Host.CreateDefaultBuilder(args)
             // Task 2
             services.AddCustomTinyMceStyles();
             services.AddBlogDisplayOptions();
+            services.AddAuthorProfiles();
 
             if (!string.IsNullOrWhiteSpace(context.Configuration["Optimizely:ContentGraph:AppKey"]))
             {

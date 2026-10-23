@@ -1,8 +1,10 @@
 @using EPiServer.Web
 @model BlogPostPage
 @inject IContextModeResolver ContextModeResolver
+@inject AuthorProfiles Authors
 @{
     var isEditing = ContextModeResolver.CurrentMode.EditOrPreview();
+    var authorUrl = Authors.GetUrl(Model);
 }
 @section Styles {
     <link rel="stylesheet" crossorigin href="/blog-post-page.css">
@@ -14,7 +16,7 @@
         <time @Html.EditAttributes(m => m.PublishDate) datetime="@Model.GetPublishDate().ToString("yyyy-MM-dd")">@Model.GetPublishDate().ToString("d MMM yyyy")</time>
         @if (!string.IsNullOrWhiteSpace(Model.Author) || isEditing)
         {
-            <span>· by <span @Html.EditAttributes(m => m.Author)>@Model.Author</span></span>
+            <span>· by <span @Html.EditAttributes(m => m.Author)>@if (authorUrl is null) { @Model.Author } else { <a href="@authorUrl">@Model.Author</a> }</span></span>
         }
     </p>
 

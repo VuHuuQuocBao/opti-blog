@@ -55,6 +55,7 @@ public class BlogPostPage : SitePageData
         Description = "Name of the author.",
         GroupName = GroupNames.PostDetails,
         Order = 20)]
+    [IndexingType(IndexingType.Queryable)]
     public virtual string? Author { get; set; }
 
     [Display(
