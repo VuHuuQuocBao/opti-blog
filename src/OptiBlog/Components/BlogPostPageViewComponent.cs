@@ -8,5 +8,5 @@ namespace OptiBlog.Components;
 public class BlogPostPageViewComponent : PartialContentComponent<BlogPostPage>
 {
     protected override IViewComponentResult InvokeComponent(BlogPostPage currentContent) =>
-        View(new BlogTeaserViewModel(currentContent));
+        View(BlogTeaserViewModel.ViewPath, new BlogTeaserViewModel(currentContent));
 }

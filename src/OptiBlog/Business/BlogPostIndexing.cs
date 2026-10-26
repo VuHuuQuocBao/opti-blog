@@ -42,6 +42,7 @@ public static class BlogPostIndexing
             conventions.ExcludeContentType<ImageData>();
             conventions.ExcludeContentType<VideoData>();
             conventions.ExcludeContentType<SearchPage>();
+            conventions.ExcludeContentType<SiteSettingsPage>();
 
             var posts = conventions.ForInstancesOf<BlogPostPage>();
             posts.IncludeField(post => post.ReadingTime(), IndexingType.Queryable);

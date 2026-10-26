@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using OptiBlog.Business;
 
 namespace OptiBlog.Models.Pages;
 
@@ -9,9 +10,12 @@ namespace OptiBlog.Models.Pages;
     GroupName = ContentTypeGroupNames.Blog,
     Order = 10)]
 [AvailableContentTypes(Availability.Specific, Include = [typeof(BlogPostPage)])]
-public class BlogListPage : SitePageData
+public class BlogListPage : SitePageData, IHeaderFooterConfigurable
 {
     public const int DefaultPageSize = 10;
+
+    [Display(Name = "Header and footer", GroupName = SystemTabNames.Settings)]
+    public HeaderFooterSettings? HeaderFooter { get; set; }
 
     [CultureSpecific]
     [Display(

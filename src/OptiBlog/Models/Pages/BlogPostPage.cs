@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using EPiServer.Web;
+using OptiBlog.Business;
 using OptiBlog.Models.Blocks;
 
 namespace OptiBlog.Models.Pages;
@@ -11,8 +12,11 @@ namespace OptiBlog.Models.Pages;
     GroupName = ContentTypeGroupNames.Blog,
     Order = 20)]
 [AvailableContentTypes(Availability.None)]
-public class BlogPostPage : SitePageData
+public class BlogPostPage : SitePageData, IHeaderFooterConfigurable
 {
+    [Display(Name = "Header and footer", GroupName = SystemTabNames.Settings)]
+    public virtual HeaderFooterSettings? HeaderFooter { get; set; }
+
     [CultureSpecific]
     [Required]
     [StringLength(150)]

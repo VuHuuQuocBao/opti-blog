@@ -10,7 +10,7 @@ namespace OptiBlog.Components;
 public class BlogTeaserBlockViewComponent(IContentLoader contentLoader) : BlockComponent<BlogTeaserBlock>
 {
     protected override IViewComponentResult InvokeComponent(BlogTeaserBlock currentContent) =>
-        CreateViewModel(contentLoader, currentContent) is { } model ? View(model) : Content(string.Empty);
+        CreateViewModel(contentLoader, currentContent) is { } model ? View(BlogTeaserViewModel.ViewPath, model) : Content(string.Empty);
 
     internal static BlogTeaserViewModel? CreateViewModel(IContentLoader contentLoader, BlogTeaserBlock block)
     {

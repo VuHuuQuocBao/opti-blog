@@ -1,7 +1,11 @@
 @using EPiServer.Web.Routing
 @inject IContentRouteHelper ContentRouteHelper
+@inject SiteSettings SiteSettings
 @{
     var currentPage = ContentRouteHelper.Content as SitePageData;
+    var siteName = SiteSettings.Current?.SiteName;
+    var header = SiteSettings.GetHeader(currentPage);
+    var footer = SiteSettings.GetFooter(currentPage);
     var title = string.IsNullOrWhiteSpace(currentPage?.MetaTitle) ? currentPage?.Name : currentPage.MetaTitle;
 }
 <!doctype html>
@@ -9,7 +13,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@(string.IsNullOrWhiteSpace(title) ? "Opti Blog" : $"{title} – Opti Blog")</title>
+    <title>@title – @siteName</title>
     @if (!string.IsNullOrWhiteSpace(currentPage?.MetaDescription))
     {
         <meta name="description" content="@currentPage.MetaDescription">
@@ -26,15 +30,42 @@
     @Html.RequiredClientResources("Header")
 </head>
 <body>
-    @await Component.InvokeAsync("SiteHeader")
+    @if (header is not null)
+    {
+        <header class="site-header">
+            <div class="container site-header__inner">
+                <a class="site-header__logo" href="@Url.ContentUrl(ContentReference.StartPage)">
+                    @if (ContentReference.IsNullOrEmpty(header.Logo))
+                    {
+                        @siteName
+                    }
+                    else
+                    {
+                        <img src="@Url.ContentUrl(header.Logo)" alt="@siteName" height="40" />
+                    }
+                </a>
+                <nav class="site-header__nav" aria-label="Primary">
+                    <ul role="list">
+                        @foreach (var link in header.NavigationLinks ?? [])
+                        {
+                            <li><a href="@Url.ContentUrl(new Url(link.Href))">@link.Text</a></li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </header>
+    }
     <main class="container">
         @RenderBody()
     </main>
-    <footer class="site-footer">
-        <div class="container site-footer__inner">
-            <p>&copy; @DateTime.Now.Year Opti Blog</p>
-        </div>
-    </footer>
+    @if (footer is not null)
+    {
+        <footer class="site-footer">
+            <div class="container site-footer__inner">
+                <p>@footer.CopyrightText</p>
+            </div>
+        </footer>
+    }
     @Html.RequiredClientResources("Footer")
 </body>
 </html>

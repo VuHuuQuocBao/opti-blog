@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using OptiBlog.Business;
 
 namespace OptiBlog.Models.Pages;
 
@@ -8,9 +9,12 @@ namespace OptiBlog.Models.Pages;
     Description = "The home page of a site.",
     GroupName = ContentTypeGroupNames.Site,
     Order = 10)]
-[AvailableContentTypes(Availability.Specific, Include = [typeof(BlogListPage)])]
-public class StartPage : SitePageData
+[AvailableContentTypes(Availability.Specific, Include = [typeof(BlogListPage), typeof(SiteSettingsPage)])]
+public class StartPage : SitePageData, IHeaderFooterConfigurable
 {
+    [Display(Name = "Header and footer", GroupName = SystemTabNames.Settings)]
+    public virtual HeaderFooterSettings? HeaderFooter { get; set; }
+
     [CultureSpecific]
     [Display(
         Name = "Heading",

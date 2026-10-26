@@ -9,7 +9,7 @@ namespace OptiBlog.Business;
 
 public record AuthorRoute(AuthorProfileBlock Author, int Page);
 
-public class AuthorProfiles(IContentLoader contentLoader, IUrlResolver urlResolver)
+public class AuthorProfiles(IContentLoader contentLoader, IUrlResolver urlResolver, SiteSettings siteSettings)
 {
     public const string UrlSegment = "author";
 
@@ -22,9 +22,14 @@ public class AuthorProfiles(IContentLoader contentLoader, IUrlResolver urlResolv
         $"{urlResolver.GetUrl(blogList)}{UrlSegment}/{slug}/{(page > 1 ? $"page-{page}/" : string.Empty)}";
 
     private IEnumerable<AuthorProfileBlock> All() =>
-        contentLoader.GetDescendents(SystemDefinition.Current.GlobalAssetsRoot)
+        contentLoader.GetDescendents(AuthorFolder())
             .Select(contentLoader.Get<IContent>)
             .OfType<AuthorProfileBlock>();
+
+    private ContentReference AuthorFolder() =>
+        siteSettings.Current?.AuthorProfileFolder is { } folder && !ContentReference.IsNullOrEmpty(folder)
+            ? folder
+            : SystemDefinition.Current.GlobalAssetsRoot;
 }
 
 public class AuthorPartialRouter(AuthorProfiles authors, IHttpContextAccessor httpContextAccessor) : IPartialRouter<BlogListPage, AuthorRoute>
