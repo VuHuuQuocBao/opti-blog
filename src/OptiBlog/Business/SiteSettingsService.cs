@@ -1,75 +1,10 @@
-using System.ComponentModel.DataAnnotations;
 using EPiServer.Framework.Cache;
-using EPiServer.SpecializedProperties;
-using EPiServer.Web;
-using OptiBlog.Models;
+using OptiBlog.Models.Blocks;
 using OptiBlog.Models.Pages;
 
 namespace OptiBlog.Business;
 
-[ContentType(GUID = "203aedd1-44cd-4b1e-b790-aac46a9522de", DisplayName = "Site settings", GroupName = ContentTypeGroupNames.Site, Order = 100)]
-[AvailableContentTypes(Availability.None)]
-public class SiteSettingsPage : SitePageData
-{
-    [Required]
-    [Display(Name = "Site name", Order = 10)]
-    public virtual string? SiteName { get; set; }
-
-    [UIHint(UIHint.Block), AllowedTypes(typeof(HeaderBlock))]
-    [Display(Name = "Default header", Order = 20)]
-    public virtual ContentReference? DefaultHeader { get; set; }
-
-    [UIHint(UIHint.Block), AllowedTypes(typeof(FooterBlock))]
-    [Display(Name = "Default footer", Order = 30)]
-    public virtual ContentReference? DefaultFooter { get; set; }
-
-    [UIHint(UIHint.AssetsFolder)]
-    [Display(Name = "Author profile folder", Order = 40)]
-    public virtual ContentReference? AuthorProfileFolder { get; set; }
-}
-
-[ContentType(GUID = "d6c22fcb-f74e-464a-a728-b800cab8f258", DisplayName = "Header", GroupName = ContentTypeGroupNames.Site, Order = 10)]
-public class HeaderBlock : BlockData
-{
-    [UIHint(UIHint.Image)]
-    public virtual ContentReference? Logo { get; set; }
-
-    [Display(Name = "Navigation links")]
-    public virtual LinkItemCollection? NavigationLinks { get; set; }
-}
-
-[ContentType(GUID = "3a636a78-33b3-43ec-83b3-075333a46d8b", DisplayName = "Footer", GroupName = ContentTypeGroupNames.Site, Order = 20)]
-public class FooterBlock : BlockData
-{
-    [CultureSpecific]
-    [Display(Name = "Copyright text")]
-    public virtual string? CopyrightText { get; set; }
-}
-
-public interface IHeaderFooterConfigurable
-{
-    HeaderFooterSettings? HeaderFooter { get; }
-}
-
-[ContentType(GUID = "d43743e9-fdc5-4a87-be2d-3cc635ed8953", DisplayName = "Header and footer settings", AvailableInEditMode = false)]
-public class HeaderFooterSettings : BlockData
-{
-    [Display(Name = "Hide header", Order = 10)]
-    public virtual bool HideHeader { get; set; }
-
-    [UIHint(UIHint.Block), AllowedTypes(typeof(HeaderBlock))]
-    [Display(Name = "Header override", Order = 20)]
-    public virtual ContentReference? HeaderOverride { get; set; }
-
-    [Display(Name = "Hide footer", Order = 30)]
-    public virtual bool HideFooter { get; set; }
-
-    [UIHint(UIHint.Block), AllowedTypes(typeof(FooterBlock))]
-    [Display(Name = "Footer override", Order = 40)]
-    public virtual ContentReference? FooterOverride { get; set; }
-}
-
-public class SiteSettings(
+public class SiteSettingsService(
     IContentLoader contentLoader,
     IContentEvents contentEvents,
     ISynchronizedObjectInstanceCache cache,

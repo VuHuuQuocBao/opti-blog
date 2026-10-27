@@ -1,7 +1,7 @@
 @using EPiServer.Web
 @model BlogPostPage
 @inject IContextModeResolver ContextModeResolver
-@inject AuthorProfiles Authors
+@inject AuthorProfilesService Authors
 @{
     var isEditing = ContextModeResolver.CurrentMode.EditOrPreview();
     var authorUrl = Authors.GetUrl(Model);

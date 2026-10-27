@@ -1,5 +1,5 @@
 @model AuthorPageViewModel
-@inject AuthorProfiles Authors
+@inject AuthorProfilesService Authors
 @{
     var author = Model.Author;
     var initials = string.Concat(author.Name!.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(word => word[0]));

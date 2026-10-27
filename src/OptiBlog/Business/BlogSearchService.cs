@@ -10,7 +10,7 @@ public record BlogSearchQuery(string? Q, string? Tag, string? Month, bool Quick,
 
 public record BlogSearchResult(IReadOnlyList<BlogPostPage> Posts, int Total, List<FacetValue> Tags, List<FacetValue> Months);
 
-public static class BlogSearch
+public static class BlogSearchService
 {
     public const int QuickReadMinutes = 3;
     private const int RecentDays = 90;

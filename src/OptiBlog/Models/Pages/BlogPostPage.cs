@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using EPiServer.Web;
-using OptiBlog.Business;
 using OptiBlog.Models.Blocks;
 
 namespace OptiBlog.Models.Pages;

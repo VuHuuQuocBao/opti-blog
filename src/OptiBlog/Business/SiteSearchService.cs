@@ -42,7 +42,7 @@ public class SiteContentUrl
     public string Default { get; set; } = string.Empty;
 }
 
-public static class SiteSearch
+public static class SiteSearchService
 {
     public const int PageSize = 10;
     private const string PageType = "_Page";

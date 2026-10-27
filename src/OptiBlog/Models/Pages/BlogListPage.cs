@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using OptiBlog.Business;
+using OptiBlog.Models.Blocks;
 
 namespace OptiBlog.Models.Pages;
 

@@ -9,37 +9,56 @@ namespace OptiBlog.Business;
 
 public record AuthorRoute(AuthorProfileBlock Author, int Page);
 
-public class AuthorProfiles(IContentLoader contentLoader, IUrlResolver urlResolver, SiteSettings siteSettings)
+public class AuthorProfilesService(IContentLoader contentLoader, IUrlResolver urlResolver, SiteSettingsService siteSettings)
 {
     public const string UrlSegment = "author";
 
     public AuthorProfileBlock? FindBySlug(string slug) => All().FirstOrDefault(author => author.Slug == slug);
 
-    public string? GetUrl(BlogPostPage post) =>
-        All().FirstOrDefault(author => author.Name == post.Author) is { Slug: { } slug } ? GetUrl(post.ParentLink, slug) : null;
+    public string? GetUrl(BlogPostPage post)
+    {
+        var author = All().FirstOrDefault(author => author.Name == post.Author);
 
-    public string GetUrl(ContentReference blogList, string slug, int page = 1) =>
-        $"{urlResolver.GetUrl(blogList)}{UrlSegment}/{slug}/{(page > 1 ? $"page-{page}/" : string.Empty)}";
+        if (author?.Slug is not { } slug)
+            return null;
+
+        return GetUrl(post.ParentLink, slug);
+    }
+
+    public string GetUrl(ContentReference blogList, string slug, int page = 1)
+    {
+        var url = $"{urlResolver.GetUrl(blogList)}{UrlSegment}/{slug}/";
+
+        if (page > 1)
+            url += $"page-{page}/";
+
+        return url;
+    }
 
     private IEnumerable<AuthorProfileBlock> All() =>
         contentLoader.GetDescendents(AuthorFolder())
             .Select(contentLoader.Get<IContent>)
             .OfType<AuthorProfileBlock>();
 
-    private ContentReference AuthorFolder() =>
-        siteSettings.Current?.AuthorProfileFolder is { } folder && !ContentReference.IsNullOrEmpty(folder)
-            ? folder
-            : SystemDefinition.Current.GlobalAssetsRoot;
+    private ContentReference AuthorFolder()
+    {
+        var folder = siteSettings.Current?.AuthorProfileFolder;
+
+        if (folder != null && !ContentReference.IsNullOrEmpty(folder))
+            return folder;
+
+        return SystemDefinition.Current.GlobalAssetsRoot;
+    }
 }
 
-public class AuthorPartialRouter(AuthorProfiles authors, IHttpContextAccessor httpContextAccessor) : IPartialRouter<BlogListPage, AuthorRoute>
+public class AuthorPartialRouter(AuthorProfilesService authors, IHttpContextAccessor httpContextAccessor) : IPartialRouter<BlogListPage, AuthorRoute>
 {
     private const string PagePrefix = "page-";
 
     public object? RoutePartial(BlogListPage content, UrlResolverContext segmentContext)
     {
         var segments = segmentContext.RemainingSegments.ToString().Split('/', StringSplitOptions.RemoveEmptyEntries);
-        if (segments is not [AuthorProfiles.UrlSegment, var slug, .. var rest]
+        if (segments is not [AuthorProfilesService.UrlSegment, var slug, .. var rest]
             || authors.FindBySlug(slug) is not { } author
             || ParsePage(rest) is not { } page)
         {
@@ -66,6 +85,6 @@ public static class AuthorProfilesServiceCollectionExtensions
     public static IServiceCollection AddAuthorProfiles(this IServiceCollection services) =>
         services
             .AddHttpContextAccessor()
-            .AddSingleton<AuthorProfiles>()
+            .AddSingleton<AuthorProfilesService>()
             .AddSingleton<IPartialRouter, AuthorPartialRouter>();
 }

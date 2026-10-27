@@ -1,6 +1,6 @@
 @using EPiServer.Web.Routing
 @inject IContentRouteHelper ContentRouteHelper
-@inject SiteSettings SiteSettings
+@inject SiteSettingsService SiteSettings
 @{
     var currentPage = ContentRouteHelper.Content as SitePageData;
     var siteName = SiteSettings.Current?.SiteName;
