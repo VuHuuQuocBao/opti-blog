@@ -6,9 +6,8 @@ namespace OptiBlog.Business;
 
 public class SiteSettingsService(
     IContentLoader contentLoader,
-    IContentEvents contentEvents,
     ISynchronizedObjectInstanceCache cache,
-    IContentCacheKeyCreator cacheKeys) : IHostedService
+    IContentCacheKeyCreator cacheKeys)
 {
     public SiteSettingsPage? Current
     {
@@ -46,18 +45,6 @@ public class SiteSettingsService(
         return LoadBlock<FooterBlock>(options?.FooterOverride, Current?.DefaultFooter);
     }
 
-    public Task StartAsync(CancellationToken cancellationToken)
-    {
-        contentEvents.CreatingContent += PreventSecondSettingsPage;
-        return Task.CompletedTask;
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        contentEvents.CreatingContent -= PreventSecondSettingsPage;
-        return Task.CompletedTask;
-    }
-
     private SiteSettingsPage? FindPublishedSettings(ContentReference startPage)
     {
         return contentLoader
@@ -82,7 +69,7 @@ public class SiteSettingsService(
         return contentLoader.TryGet<T>(blockLink, out var block) ? block : null;
     }
 
-    private void PreventSecondSettingsPage(object? sender, ContentEventArgs e)
+    public void PreventSecondSettingsPage(object? sender, ContentEventArgs e)
     {
         if (e.Content is not SiteSettingsPage newSettings)
         {
