@@ -77,7 +77,7 @@ public class BlogPostPage : SitePageData, IHeaderFooterConfigurable
         Order = 10)]
     public virtual ContentReference? HeroImage { get; set; }
 
-    [AllowedTypes(typeof(BlogPostPage), typeof(BlogTeaserBlock))]
+    [AllowedTypes(typeof(BlogTeaserBlock))]
     [Display(
         Name = "Related posts",
         Description = "Other posts shown below this one.",

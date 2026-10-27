@@ -46,11 +46,9 @@ public class SiteSettingsService(
     }
 
     private SiteSettingsPage? FindPublishedSettings(ContentReference startPage)
-    {
-        return contentLoader
+        => contentLoader
             .GetChildren<SiteSettingsPage>(startPage)
-            .FirstOrDefault(settings => settings.CheckPublishedStatus(PagePublishedStatus.Published));
-    }
+            .FirstOrDefault(settings => settings.Status == VersionStatus.Published);
 
     private static HeaderFooterSettings? GetOptions(IContent? page)
     {

@@ -34,6 +34,7 @@ public class BlogListPage : SitePageData, IHeaderFooterConfigurable
     public virtual XhtmlString? Intro { get; set; }
 
     [CultureSpecific]
+    [AllowedTypes(typeof(BlogTeaserBlock))]
     [Display(
         Name = "Main content area",
         GroupName = SystemTabNames.Content,

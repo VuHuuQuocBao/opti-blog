@@ -24,6 +24,7 @@ public class StartPage : SitePageData, IHeaderFooterConfigurable
     public virtual string? Heading { get; set; }
 
     [CultureSpecific]
+    [AllowedTypes(typeof(BlogTeaserBlock))]
     [Display(
         Name = "Main content area",
         GroupName = SystemTabNames.Content,
