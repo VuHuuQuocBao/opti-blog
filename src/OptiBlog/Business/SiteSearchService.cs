@@ -3,8 +3,10 @@ using Optimizely.Graph.Cms.Query;
 using Optimizely.Graph.Cms.Query.Abstractions;
 using Optimizely.Graph.Cms.Query.Attributes;
 using Optimizely.Graph.Cms.Query.Filtering;
+using Optimizely.Graph.Cms.Query.Linq.Request;
 using OptiBlog.Models.Media;
 using OptiBlog.Models.Pages;
+using static Optimizely.Graph.Cms.Query.Linq.Request.GraphQueryFilter;
 
 namespace OptiBlog.Business;
 
@@ -23,6 +25,9 @@ public class _Content
 
 public class SiteContentMetadata
 {
+    [GraphName("key")]
+    public string Key { get; set; } = string.Empty;
+
     [GraphName("displayName")]
     public string DisplayName { get; set; } = string.Empty;
 
@@ -49,7 +54,9 @@ public static class SiteSearchService
     private const string PostType = nameof(BlogPostPage);
     private const string DocumentType = nameof(DocumentFile);
     private const int TitleBoost = 5;
+    private const int SummaryBoost = 3;
     private const int ContentBoost = 1;
+    private const int DocumentContentBoost = 2;
 
     public static async Task<SiteSearchResult> SearchSiteAsync(
         this IGraphContentClient graphClient,
@@ -62,13 +69,20 @@ public static class SiteSearchService
             return new SiteSearchResult([], 0);
         }
 
+        var text = search.Q;
+        var title = new GraphQlField<string>("_metadata.displayName");
+        var fulltext = new GraphQlField<string>("_fulltext");
+        var summaryKeys = await graphClient.FindSummaryMatchesAsync(text, cancellationToken);
+
         var query = graphClient.Query<_Content>()
-            .SearchFor(search.Q, "mark")
-            .UsingField(content => content.Metadata.DisplayName, boost: TitleBoost)
-            .UsingField("_fulltext", ContentBoost)
+            .SearchFor(text, "mark")
             .WithPinned()
             .WithExcerpts()
-            .Where(content => content.Metadata.Path.ContainsAny(siteKey) | content.Metadata.Types.ContainsAny(DocumentType));
+            .Where(content => content.Metadata.Path.ContainsAny(siteKey) | content.Metadata.Types.ContainsAny(DocumentType))
+            .Where(content => Boost(title.Match(text), TitleBoost)
+                || (Boost(fulltext.Match(text), ContentBoost) && !content.Metadata.Types.Contains(DocumentType))
+                || (Boost(fulltext.Match(text), DocumentContentBoost) && content.Metadata.Types.Contains(DocumentType))
+                || (Boost(fulltext.Match(text), SummaryBoost) && summaryKeys.Contains(content.Metadata.Key)));
 
         query = search.Type switch
         {
@@ -90,9 +104,20 @@ public static class SiteSearchService
             .Select(content => new SiteSearchHit(
                 content.Metadata.DisplayName,
                 content.Metadata.Url.Default,
-                result.Excerpts.TryGetValue(content, out var excerpts) ? excerpts[0] : null))
+                result.Excerpts?.TryGetValue(content, out var excerpts) == true ? excerpts[0] : null))
             .ToList();
 
         return new SiteSearchResult(hits, result.Total ?? 0);
+    }
+
+    // _Content has no Summary field, so find the posts whose summary matches; "none" keeps the key list non-empty.
+    private static async Task<List<string>> FindSummaryMatchesAsync(this IGraphContentClient graphClient, string text, CancellationToken cancellationToken)
+    {
+        var posts = await graphClient.QueryContent<BlogPostPage>()
+            .SearchFor(text)
+            .UsingField(post => post.Summary!)
+            .GetAsContentAsync(cancellationToken);
+
+        return [.. posts.Select(post => post.ContentGuid.ToString("N")).DefaultIfEmpty("none")];
     }
 }
